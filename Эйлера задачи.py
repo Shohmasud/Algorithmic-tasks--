@@ -1,3 +1,46 @@
+
+Алгоритм бинарного поиска для создания дерево
+from .models import Post
+import re
+
+"""Алгоритм дерево коментарий.Все элементы представлены в виде чисел(int): 
+   родительские,дочерние и связующие элементы,для построения дерево комментарий"""
+def algoritm(number=None):
+    # ///Модель комментов
+    comment = Post.objects.all()
+
+    # /// Представление элементов базы данных в виде чисел
+    massive = [int(number.pk) for number in comment]
+
+    # // Нахождение родительских элементов комментарий
+    massive_parent = [number for number in massive if Post.objects.get(pk=number).parent is None]
+
+    # // Нахождение всех дочерних элементов комментарий
+    massive_child = [number for number in massive if Post.objects.get(pk=number).parent is not None]
+    result = []
+    for parent in massive_parent:
+        result.append(parent)
+    for child in massive_child:
+        result.append(child)
+    answer = []
+    s = True
+    for j in range(len(result)):
+        for parent_child in result:
+            if result[j] != parent_child:
+                if result[j] == Post.objects.get(pk=parent_child).parent:
+                    answer.append(parent_child)
+            if s is True:
+                answer.append(result[j])
+                s = False
+        s = True
+    delete_objects_db = Post.objects.delete()
+    for create_obj in range(len(answer)):
+        create = Post.objects.create()
+    return answer
+
+
+
+
 # Числа фибоначи
 # a = [1, 1]
 # for i in range(0, 8):
